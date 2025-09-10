@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import SQLModel
 
-from src.core.config import settings
+from src.core.settings.config import settings
 
 # This file is responsible for creating the database engine and session
 # and initializing the database.

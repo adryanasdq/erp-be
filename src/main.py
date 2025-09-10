@@ -3,8 +3,8 @@ from fastapi import FastAPI, APIRouter
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.core.db import init_db
-from src.modules.hr.router import hr_router
+from src.core.settings.database import init_db
+from src.v1.hr.router import hr_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
