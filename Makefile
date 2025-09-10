@@ -11,7 +11,7 @@ s:
 	uv venv
 
 r:
-	uv run src/main.py
+	fastapi run src/main.py
 
 i:
 	uv sync

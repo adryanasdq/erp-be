@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.db import init_db
+from src.modules.hr.router import hr_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,6 +31,9 @@ app.add_middleware(
 )
 
 api_router = APIRouter(prefix="/api/v1")
+api_router.include_router(hr_router)
+
+app.include_router(api_router)
 
 def main():
     import uvicorn
