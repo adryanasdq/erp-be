@@ -21,3 +21,10 @@ class EmployeeService:
 
         result = await self.session.exec(stmnt)
         return result.first()
+    
+
+    async def create_employee(self, employee: Employee):
+        self.session.add(employee)
+        await self.session.commit()
+        await self.session.refresh(employee)
+        return employee
