@@ -9,7 +9,7 @@ class EmployeeService:
         self.session = session
 
 
-    async def get_employees(self):
+    async def get_all_employees(self):
         stmnt = select(Employee)
 
         result = await self.session.exec(stmnt)

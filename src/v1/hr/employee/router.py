@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.models.hr.employee import Employee
-from src.core.schemas.hr.employee import CreateEmployee
+from src.core.schemas.hr.employee import Employee
 from src.core.settings.database import get_session
 from .service import EmployeeService
 
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/employees", tags=["Employees"])
 
 @router.get("/")
 async def get_all_employees(session: AsyncSession = Depends(get_session)):
-    employees = await EmployeeService(session).get_employees()
+    employees = await EmployeeService(session).get_all_employees()
     return employees
 
 
