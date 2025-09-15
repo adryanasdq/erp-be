@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, func
+from datetime import datetime
 
 from src.utils import generate_cuid
 
@@ -10,3 +11,7 @@ class Position(SQLModel, table=True):
     title: str = Field(max_length=50, nullable=False)
     description: str | None = Field(max_length=255, nullable=True)
     reports_to_pos_id: str | None = Field(nullable=True, max_length=50)
+    modified_date: datetime = Field(
+        default=func.now(),
+        sa_column_kwargs={"onupdate": func.now()}
+    )
