@@ -1,10 +1,15 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
 
-from src.utils import generate_cuid
+from src.core.settings.database import get_session
 from src.core.models.hr.department import Department as DbDepartment
 from src.core.schemas.hr.department import Department
+from src.utils import generate_cuid
+
 from .exception import DepartmentIdExists, DepartmentNotFound
+
 
 async def check_if_department_exists(dept_id: str, session: AsyncSession):
     db_dept = await session.get(DbDepartment, dept_id)
@@ -12,11 +17,15 @@ async def check_if_department_exists(dept_id: str, session: AsyncSession):
         raise DepartmentIdExists()
     return
 
-async def get_department_by_id(dept_id: str, session: AsyncSession):
+
+async def get_department_by_id(
+    dept_id: str, session: AsyncSession = Depends(get_session)
+):
     db_dept = await session.get(DbDepartment, dept_id)
     if not db_dept:
         raise DepartmentNotFound()
     return db_dept
+
 
 async def validate_department(dept: Department, session: AsyncSession, id: str = None):
     if id is None:
