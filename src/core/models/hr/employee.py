@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, func
-from datetime import date
+from datetime import date, datetime
 
 from src.utils import generate_cuid
 
@@ -14,9 +14,9 @@ class Employee(SQLModel, table=True):
     name: str = Field(max_length=50, nullable=False)
     position_id: str = Field(nullable=False)
     department_id: str = Field(nullable=False)
-    hire_date: str = Field(default=func.now())
+    hire_date: date = Field(default=func.now())
     status: str = Field(default="active", max_length=20)
-    modified_date: str = Field(
+    modified_date: datetime = Field(
         default=func.now(),
         sa_column_kwargs={"onupdate": func.now()}
     )
