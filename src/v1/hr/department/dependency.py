@@ -6,7 +6,7 @@ from sqlmodel import select
 from src.core.settings.database import get_session
 from src.core.models.hr.department import Department as DbDepartment
 from src.core.schemas.hr.department import Department
-from src.utils import generate_cuid
+from src.utils import generate_custom_id
 
 from .exception import DepartmentIdExists, DepartmentNotFound
 
@@ -29,7 +29,7 @@ async def get_department_by_id(
 
 async def validate_department(dept: Department, session: AsyncSession, id: str = None):
     if id is None:
-        dept.id = generate_cuid()
+        dept.id = await generate_custom_id("dept", session)
         await check_if_department_exists(dept.id, session)
         db_dept = DbDepartment(
             id=dept.id, **dept.model_dump(exclude_unset=True, exclude={"id"})
