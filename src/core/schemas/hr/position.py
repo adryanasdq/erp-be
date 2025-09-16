@@ -6,7 +6,7 @@ class Position(BaseModel):
     id: Optional[str] = Field(None, readonly=True)
     title: str
     description: Optional[str] = None
-    reports_to_pos_id: Optional[str] = None
+    department_id: Optional[str] = None
 
     model_config = {
         "from_attributes": True,
@@ -14,7 +14,7 @@ class Position(BaseModel):
             "example": {
                 "title": "Software Engineer",
                 "description": "Responsible for developing and maintaining software applications.",
-                "reports_to_pos_id": "POS0001",
+                "department_id": "DEPT25090002",
             }
         }
     }

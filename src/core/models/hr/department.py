@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, func
+from sqlmodel import SQLModel, Field, func, Relationship
 from datetime import datetime
 
 
@@ -13,3 +13,6 @@ class Department(SQLModel, table=True):
         default=func.now(),
         sa_column_kwargs={"onupdate": func.now()}
     )
+
+    # Relationships
+    positions: list["Position"] = Relationship(back_populates="dept", cascade_delete=True)

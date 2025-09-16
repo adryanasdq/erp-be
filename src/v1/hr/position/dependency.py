@@ -6,6 +6,7 @@ from src.core.settings.database import get_session
 from src.core.models.hr.position import Position as DbPosition
 from src.core.schemas.hr.position import Position
 from src.utils import generate_custom_id
+from src.v1.hr.department.dependency import get_department_by_id
 
 from .exception import PositionIdExists, PositionNotFound
 
@@ -27,8 +28,7 @@ async def get_position_by_id(
 
 
 async def validate_position(pos: Position, session: AsyncSession, id: str = None):
-    if pos.reports_to_pos_id:
-        await get_position_by_id(pos.reports_to_pos_id, session)
+    await get_department_by_id(pos.department_id, session)
 
     if id is None:
         pos.id = await generate_custom_id("pos", session)
