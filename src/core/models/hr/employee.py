@@ -9,9 +9,6 @@ class Employee(SQLModel, table=True):
     __table_args__ = {"schema": "main"}
 
     id: str = Field(primary_key=True, index=True)
-    email: str = Field(max_length=100, nullable=False, unique=True)
-    username: str = Field(max_length=50, nullable=False, unique=True)
-    password: str = Field(max_length=255, nullable=False)
     name: str = Field(max_length=50, nullable=False)
     position_id: str = Field(
         foreign_key="main.positions.id", ondelete="CASCADE", nullable=False
