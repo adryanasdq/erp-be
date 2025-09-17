@@ -1,22 +1,27 @@
-from sqlmodel import SQLModel, Field, func
+from sqlmodel import Relationship, SQLModel, Field, func
 from datetime import date, datetime
 
-from src.utils import generate_cuid
+from src.core.models.hr.position import Position
+
 
 class Employee(SQLModel, table=True):
-    __tablename__ = 'employees'
-    __table_args__ = {'schema': 'main'}
+    __tablename__ = "employees"
+    __table_args__ = {"schema": "main"}
 
-    id: str = Field(default_factory=generate_cuid, primary_key=True, index=True)
+    id: str = Field(primary_key=True, index=True)
     email: str = Field(max_length=100, nullable=False, unique=True)
     username: str = Field(max_length=50, nullable=False, unique=True)
     password: str = Field(max_length=255, nullable=False)
     name: str = Field(max_length=50, nullable=False)
-    position_id: str = Field(nullable=False)
-    department_id: str = Field(nullable=False)
+    position_id: str = Field(
+        foreign_key="main.positions.id", ondelete="CASCADE", nullable=False
+    )
+    manager_id: str = Field(nullable=True)
     hire_date: date = Field(default=func.now())
     status: str = Field(default="active", max_length=20)
     modified_date: datetime = Field(
-        default=func.now(),
-        sa_column_kwargs={"onupdate": func.now()}
+        default=func.now(), sa_column_kwargs={"onupdate": func.now()}
     )
+
+    # Relationships
+    position: "Position" = Relationship(back_populates="employees")

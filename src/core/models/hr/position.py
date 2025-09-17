@@ -20,3 +20,5 @@ class Position(SQLModel, table=True):
 
     # Relationships
     dept: "Department" = Relationship(back_populates="positions")
+    
+    employees: list["Employee"] = Relationship(back_populates="position", cascade_delete=True)
