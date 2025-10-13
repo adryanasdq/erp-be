@@ -19,9 +19,9 @@ async def check_if_employee_exists(emp_id: str, session: AsyncSession):
 
 
 async def get_employee_by_id(
-    emp_id: str, session: AsyncSession = Depends(get_session)
+    id: str, session: AsyncSession = Depends(get_session)
 ):
-    db_emp = await session.get(DbEmployee, emp_id)
+    db_emp = await session.get(DbEmployee, id)
     if not db_emp:
         raise EmployeeNotFound()
     return db_emp
