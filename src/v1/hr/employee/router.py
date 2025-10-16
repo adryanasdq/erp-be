@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.models.hr.employee import Employee
 from src.core.schemas.hr.employee import Employee
 from src.core.settings.database import get_session
 

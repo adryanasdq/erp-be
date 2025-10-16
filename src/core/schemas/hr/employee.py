@@ -20,7 +20,7 @@ class Employee(BaseModel):
                 "position_id": "POS25090006",
                 "manager_id": "EMP25090006",
                 "hire_date": "2023-10-01 00:00:00",
-                "status": "active"
+                "status": "Active"
             }
         }
     }

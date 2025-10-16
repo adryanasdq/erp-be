@@ -15,7 +15,7 @@ class Employee(SQLModel, table=True):
     )
     manager_id: str = Field(nullable=True)
     hire_date: date = Field(default=func.now())
-    status: str = Field(default="active", max_length=20)
+    status: str = Field(default="Active", max_length=20)
     modified_date: datetime = Field(
         default=func.now(), sa_column_kwargs={"onupdate": func.now()}
     )
