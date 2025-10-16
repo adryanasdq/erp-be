@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from sqlmodel import SQLModel
 from alembic import context
 
+from src.core.models.admin.tools.menu import Menu
+
 from src.core.models.hr.department import Department
 from src.core.models.hr.employee import Employee
 from src.core.models.hr.position import Position

@@ -7,6 +7,9 @@ g:
 up:
 	uv run alembic upgrade head
 
+down:
+	uv run alembic downgrade -1
+
 s:
 	uv venv
 
