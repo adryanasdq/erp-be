@@ -10,7 +10,7 @@ from .exception import MenuNotFound
 
 
 async def get_menu_by_id(
-    id: int, session: AsyncSession = Depends(get_session)
+    id: str, session: AsyncSession = Depends(get_session)
 ):
     db_menu = await session.get(DbMenu, id)
     if not db_menu:
@@ -18,7 +18,7 @@ async def get_menu_by_id(
     return db_menu
 
 
-async def validate_menu(menu: Menu, session: AsyncSession, id: int = None):
+async def validate_menu(menu: Menu, session: AsyncSession, id: str = None):
     if id is None:
         db_menu = DbMenu(
             id=menu.id, **menu.model_dump(exclude_unset=True, exclude={"id"})

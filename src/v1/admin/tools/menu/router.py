@@ -31,7 +31,7 @@ async def create_menu(data: Menu, session: AsyncSession = Depends(get_session)):
 
 @router.put("/{id}")
 async def update_menu(
-    id: int, data: Menu, session: AsyncSession = Depends(get_session)
+    id: str, data: Menu, session: AsyncSession = Depends(get_session)
 ):
     validated_menu = await validate_menu(data, session, id)
     return await update(validated_menu, session)
