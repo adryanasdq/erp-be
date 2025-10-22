@@ -2,16 +2,18 @@ from sqlmodel import Relationship, SQLModel, Field, func
 from typing import List, Optional
 from datetime import datetime
 
+from src.utils import generate_cuid
+
 
 class Menu(SQLModel, table=True):
     __tablename__ = "menu"
     __table_args__ = {"schema": "admin"}
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[str] = Field(primary_key=True, default_factory=generate_cuid)
     title: str = Field(max_length=100, nullable=False)
     url: str = Field(max_length=200, nullable=False)
     icon: Optional[str] = Field(default=None, max_length=100)
-    parent_id: Optional[int] = Field(
+    parent_id: Optional[str] = Field(
         default=None, foreign_key="admin.menu.id", nullable=True
     )
     order_index: int = Field(default=0)

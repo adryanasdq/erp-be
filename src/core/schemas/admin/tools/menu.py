@@ -4,11 +4,11 @@ from datetime import datetime
 
 
 class Menu(BaseModel):
-    id: Optional[int] = Field(None, readonly=True)
+    id: Optional[str] = Field(None, readonly=True)
     title: str
     url: str
     icon: Optional[str] = None
-    parent_id: Optional[int] = None
+    parent_id: Optional[str] = None
     order_index: Optional[int] = 0
     is_hidden: Optional[bool] = False
     modified_date: Optional[datetime] = None
