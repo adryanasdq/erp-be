@@ -1,51 +1,51 @@
 from fastapi import HTTPException
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.orm import Session as SessionType
 
 from src.core.models.hr.department import Department as DbDepartment
 from src.core.schemas.hr.department import Department
 
 
-async def get_all(session: AsyncSession):
+def get_all(session):
     stmnt = select(DbDepartment)
 
-    result = await session.exec(stmnt)
-    return result.all()
+    result = session.execute(stmnt)
+    return result.scalars().all()
 
 
-async def get_by_id(department_id: str, session: AsyncSession):
+def get_by_id(department_id: str, session):
     stmnt = select(DbDepartment).where(DbDepartment.id == department_id)
 
-    result = await session.exec(stmnt)
-    return result.first()
+    result = session.execute(stmnt)
+    return result.scalar_one_or_none()
 
 
-async def create(department: DbDepartment, session: AsyncSession):
+def create(department: DbDepartment, session: SessionType):
     try:
         session.add(department)
-        await session.commit()
-        await session.refresh(department)
+        session.commit()
+        session.refresh(department)
         return Department.model_validate(department)
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
 
 
-async def update(department: DbDepartment, session: AsyncSession):
+def update(department: DbDepartment, session: SessionType):
     try:
-        await session.commit()
-        await session.refresh(department)
+        session.commit()
+        session.refresh(department)
         return Department.model_validate(department)
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     
 
-async def delete(department: DbDepartment, session: AsyncSession):
+def delete(department: DbDepartment, session: SessionType):
     try:
-        await session.delete(department)
-        await session.commit()
+        session.delete(department)
+        session.commit()
         return {"message": f"Department with id {department.id} deleted successfully"}
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))

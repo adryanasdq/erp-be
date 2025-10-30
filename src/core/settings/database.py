@@ -1,25 +1,23 @@
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.orm import sessionmaker
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session as SessionType
 from sqlmodel import SQLModel
 
 from src.core.settings.config import settings
 
 # This file is responsible for creating the database engine and session
 # and initializing the database.
-async_engine = create_async_engine(url=settings.POSTGRES_URL, echo=True)
+engine = create_engine(url=settings.POSTGRES_URL, echo=True)
 
-async def init_db():
-    async with async_engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
+def init_db():
+    SQLModel.metadata.create_all(bind=engine)
 
 
-async def get_session():
-    async_session = sessionmaker(
-        bind=async_engine,
-        class_=AsyncSession,
+def get_session():
+    session = sessionmaker(
+        bind=engine,
+        class_=SessionType,
         expire_on_commit=False,
     )
 
-    async with async_session() as session:
+    with session() as session:
         yield session

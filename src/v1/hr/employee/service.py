@@ -1,51 +1,51 @@
 from fastapi import HTTPException
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.orm import Session as SessionType
 
 from src.core.models.hr.employee import Employee as DbEmployee
 from src.core.schemas.hr.employee import Employee
 
 
-async def get_all(session: AsyncSession):
+def get_all(session):
     stmnt = select(DbEmployee)
 
-    result = await session.exec(stmnt)
-    return result.all()
+    result = session.execute(stmnt)
+    return result.scalars().all()
 
 
-async def get_by_id(employee_id: str, session: AsyncSession):
+def get_by_id(employee_id: str, session):
     stmnt = select(DbEmployee).where(DbEmployee.id == employee_id)
 
-    result = await session.exec(stmnt)
-    return result.first()
+    result = session.execute(stmnt)
+    return result.scalar_one_or_none()
 
 
-async def create(employee: DbEmployee, session: AsyncSession):
+def create(employee: DbEmployee, session: SessionType):
     try:
         session.add(employee)
-        await session.commit()
-        await session.refresh(employee)
+        session.commit()
+        session.refresh(employee)
         return Employee.model_validate(employee)
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     
 
-async def update(employee: DbEmployee, session: AsyncSession):
+def update(employee: DbEmployee, session: SessionType):
     try:
-        await session.commit()
-        await session.refresh(employee)
+        session.commit()
+        session.refresh(employee)
         return Employee.model_validate(employee)
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     
 
-async def delete(employee: DbEmployee, session: AsyncSession):
+def delete(employee: DbEmployee, session: SessionType):
     try:
-        await session.delete(employee)
-        await session.commit()
+        session.delete(employee)
+        session.commit()
         return {"message": f"Employee with id {employee.id} deleted successfully"}
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))

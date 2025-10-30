@@ -1,14 +1,13 @@
 from fastapi import FastAPI, APIRouter
-from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.settings.database import init_db
 from src.v1.admin.router import admin_router
 from src.v1.hr.router import hr_router
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await init_db()
+
+def lifespan(app: FastAPI):
+    init_db()
     yield
 
 app = FastAPI(

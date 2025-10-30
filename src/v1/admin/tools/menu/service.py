@@ -1,51 +1,51 @@
 from fastapi import HTTPException
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.orm import Session as SessionType
 
 from src.core.models.admin.tools.menu import Menu as DbMenu
 from src.core.schemas.admin.tools.menu import Menu
 
 
-async def get_all(session: AsyncSession):
+def get_all(session: SessionType):
     stmnt = select(DbMenu)
 
-    result = await session.exec(stmnt)
-    return result.all()
+    result = session.execute(stmnt)
+    return result.scalars().all()
 
 
-async def get_by_id(menu_id: str, session: AsyncSession):
+def get_by_id(menu_id: str, session: SessionType):
     stmnt = select(DbMenu).where(DbMenu.id == menu_id)
 
-    result = await session.exec(stmnt)
-    return result.first()
+    result = session.execute(stmnt)
+    return result.scalar_one_or_none()
 
 
-async def create(menu: DbMenu, session: AsyncSession):
+def create(menu: DbMenu, session: SessionType):
     try:
         session.add(menu)
-        await session.commit()
-        await session.refresh(menu)
+        session.commit()
+        session.refresh(menu)
         return Menu.model_validate(menu)
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
 
-async def update(menu: DbMenu, session: AsyncSession):
+
+def update(menu: DbMenu, session: SessionType):
     try:
-        await session.commit()
-        await session.refresh(menu)
+        session.commit()
+        session.refresh(menu)
         return Menu.model_validate(menu)
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
 
-async def delete(menu: DbMenu, session: AsyncSession):
+
+def delete(menu: DbMenu, session: SessionType):
     try:
-        await session.delete(menu)
-        await session.commit()
+        session.delete(menu)
+        session.commit()
         return {"message": f"Menu with id {menu.id} deleted successfully"}
     except Exception as e:
-        await session.rollback()
+        session.rollback()
         raise HTTPException(status_code=400, detail=str(e))

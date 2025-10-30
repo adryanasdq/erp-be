@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session as SessionType
 
 from src.core.schemas.hr.employee import Employee
 from src.core.settings.database import get_session
@@ -12,34 +12,34 @@ router = APIRouter(prefix="/employees", tags=["Employees"])
 
 
 @router.get("/")
-async def get_all_employees(session: AsyncSession = Depends(get_session)):
-    employees = await get_all(session)
+def get_all_employees(session = Depends(get_session)):
+    employees = get_all(session)
     return employees
 
 
 @router.get("/{id}")
-async def get_employee(id: str, session: AsyncSession = Depends(get_session)):
-    employee = await get_by_id(id, session)
+def get_employee(id: str, session = Depends(get_session)):
+    employee = get_by_id(id, session)
     return employee
 
 
 @router.post("/")
-async def create_employee(data: Employee, session: AsyncSession = Depends(get_session)):
-    validated_employee = await validate_employee(data, session)
-    return await create(validated_employee, session)
+def create_employee(data: Employee, session: SessionType = Depends(get_session)):
+    validated_employee = validate_employee(data, session)
+    return create(validated_employee, session)
 
 
 @router.put("/{id}")
-async def update_employee(
-    id: str, data: Employee, session: AsyncSession = Depends(get_session)
+def update_employee(
+    id: str, data: Employee, session: SessionType = Depends(get_session)
 ):
-    validated_employee = await validate_employee(data, session, id)
-    return await update(validated_employee, session)
+    validated_employee = validate_employee(data, session, id)
+    return update(validated_employee, session)
 
 
 @router.delete("/{id}")
-async def delete_employee(
+def delete_employee(
     data: Employee = Depends(get_employee_by_id),
-    session: AsyncSession = Depends(get_session),
+    session: SessionType = Depends(get_session),
 ):
-    return await delete(data, session)
+    return delete(data, session)
