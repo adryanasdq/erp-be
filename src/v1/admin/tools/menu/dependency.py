@@ -1,6 +1,6 @@
 from datetime import datetime
 from fastapi import Depends
-from sqlalchemy.orm import Session as SessionType
+from sqlmodel import Session as SessionType
 
 from src.core.settings.database import get_session
 from src.core.models.admin.tools.menu import Menu as DbMenu

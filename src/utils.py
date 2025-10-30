@@ -1,6 +1,5 @@
 from cuid2 import Cuid
-from sqlalchemy import Sequence, text
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import Sequence, text, Session as SessionType
 from datetime import datetime
 
 
@@ -14,7 +13,7 @@ def generate_cuid() -> str:
     return CUID_GENERATOR.generate()
 
 
-async def generate_custom_id(prefix: str, session: AsyncSession) -> str:
+def generate_custom_id(prefix: str, session: SessionType) -> str:
     """
     Generate a custom ID with a given prefix and table name.
     Returns a string in the format: {prefix}{join_date}{next_sequence_value}
@@ -22,9 +21,9 @@ async def generate_custom_id(prefix: str, session: AsyncSession) -> str:
     """
 
     seq_name = f"{prefix.lower()}_id_seq"
-    await session.execute(text(f"CREATE SEQUENCE IF NOT EXISTS {seq_name} START 1"))
+    session.exec(text(f"CREATE SEQUENCE IF NOT EXISTS {seq_name} START 1"))
     seq = Sequence(seq_name)
-    next_val = await session.execute(seq)
+    next_val = session.exec(seq)
     join_date = datetime.now().strftime('%y%m')
 
     return f"{prefix.upper()}{join_date}{str(next_val).zfill(4)}"

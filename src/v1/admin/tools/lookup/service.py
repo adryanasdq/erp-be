@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import select
-from sqlalchemy.orm import Session as SessionType
+from sqlmodel import Session as SessionType
 
 from src.core.models.admin.tools.lookup import Lookup as DbLookup
 from src.core.schemas.admin.tools.lookup import Lookup
@@ -9,7 +9,7 @@ from src.core.schemas.admin.tools.lookup import Lookup
 def get_group(session: SessionType):
     stmnt = select(DbLookup.group_code, DbLookup.group_desc).distinct()
 
-    query = session.execute(stmnt)
+    query = session.exec(stmnt)
     results = query.all()
 
     # TODO:
@@ -21,15 +21,15 @@ def get_group(session: SessionType):
 def get_group_options(group_code: str, session: SessionType):
     stmnt = select(DbLookup).where(DbLookup.group_code == group_code)
 
-    result = session.execute(stmnt)
-    return result.scalars().all()
+    result = session.exec(stmnt)
+    return result.all()
 
 
 def get_all(session: SessionType):
     stmnt = select(DbLookup)
 
-    result = session.execute(stmnt)
-    return result.scalars().all()
+    result = session.exec(stmnt)
+    return result.all()
 
 
 def create(option: DbLookup, session: SessionType):

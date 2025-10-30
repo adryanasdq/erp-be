@@ -1,6 +1,5 @@
 from fastapi import HTTPException
-from sqlmodel import select
-from sqlalchemy.orm import Session as SessionType
+from sqlmodel import select, Session as SessionType
 
 from src.core.models.admin.tools.menu import Menu as DbMenu
 from src.core.schemas.admin.tools.menu import Menu
@@ -9,15 +8,15 @@ from src.core.schemas.admin.tools.menu import Menu
 def get_all(session: SessionType):
     stmnt = select(DbMenu)
 
-    result = session.execute(stmnt)
-    return result.scalars().all()
+    result = session.exec(stmnt)
+    return result.all()
 
 
 def get_by_id(menu_id: str, session: SessionType):
     stmnt = select(DbMenu).where(DbMenu.id == menu_id)
 
-    result = session.execute(stmnt)
-    return result.scalar_one_or_none()
+    result = session.exec(stmnt)
+    return result.first()
 
 
 def create(menu: DbMenu, session: SessionType):

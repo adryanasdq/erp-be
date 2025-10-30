@@ -1,7 +1,6 @@
 from datetime import datetime
 from fastapi import Depends
-from sqlmodel import select
-from sqlalchemy.orm import Session as SessionType
+from sqlmodel import select, Session as SessionType
 
 from src.core.models.admin.tools.lookup import Lookup as DbLookup
 from src.core.schemas.admin.tools.lookup import Lookup
@@ -12,7 +11,7 @@ from .exception import GroupCodeNotFound, OptionAlreadyExists, OptionNotFound
 
 def get_group_code(group_code: str, session: SessionType):
     stmnt = select(DbLookup).where(DbLookup.group_code == group_code)
-    query = session.execute(stmnt)
+    query = session.exec(stmnt)
     db_group_code = query.first()
 
     if not db_group_code:
@@ -25,7 +24,7 @@ def check_if_option_exists(group_code: str, value: str, session: SessionType):
         DbLookup.group_code == group_code, DbLookup.value == value
     )
 
-    query = session.execute(stmnt)
+    query = session.exec(stmnt)
     db_lookup = query.first()
 
     if db_lookup:

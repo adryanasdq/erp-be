@@ -1,23 +1,22 @@
 from fastapi import HTTPException
-from sqlmodel import select
-from sqlalchemy.orm import Session as SessionType
+from sqlmodel import select, Session as SessionType
 
 from src.core.models.hr.department import Department as DbDepartment
 from src.core.schemas.hr.department import Department
 
 
-def get_all(session):
+def get_all(session: SessionType):
     stmnt = select(DbDepartment)
 
-    result = session.execute(stmnt)
-    return result.scalars().all()
+    result = session.exec(stmnt)
+    return result.all()
 
 
-def get_by_id(department_id: str, session):
+def get_by_id(department_id: str, session: SessionType):
     stmnt = select(DbDepartment).where(DbDepartment.id == department_id)
 
-    result = session.execute(stmnt)
-    return result.scalar_one_or_none()
+    result = session.exec(stmnt)
+    return result.first()
 
 
 def create(department: DbDepartment, session: SessionType):

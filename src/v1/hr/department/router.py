@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session as SessionType
+from sqlmodel import Session as SessionType
 
 from src.core.schemas.hr.department import Department
 from src.core.settings.database import get_session
