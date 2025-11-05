@@ -12,16 +12,13 @@ def get_group(session: SessionType):
     query = session.exec(stmnt)
     results = query.all()
 
-    return {
-        "data": [
-            {
-                "group_code": row[0],
-                "group_desc": row[1],
-            }
-            for row in results
-        ],
-        "total": len(results),
-    }
+    return [
+        {
+            "group_code": row[0],
+            "group_desc": row[1],
+        }
+        for row in results
+    ]
 
 
 def get_group_options(group_code: str, session: SessionType):
@@ -36,6 +33,13 @@ def get_all(session: SessionType):
 
     result = session.exec(stmnt)
     return result.all()
+
+
+def get_by_id(menu_id: str, session: SessionType):
+    stmnt = select(DbLookup).where(DbLookup.id == menu_id)
+
+    result = session.exec(stmnt)
+    return result.first()
 
 
 def create(option: DbLookup, session: SessionType):

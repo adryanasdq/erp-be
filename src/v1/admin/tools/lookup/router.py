@@ -5,7 +5,7 @@ from src.core.schemas.admin.tools.lookup import Lookup
 from src.core.settings.database import get_session
 
 from .dependency import get_option_by_id, validate_option
-from .service import get_group, get_group_options, get_all, create, update, delete
+from .service import get_group, get_group_options, get_all, get_by_id, create, update, delete
 
 
 router = APIRouter(prefix="/lookup", tags=["Lookup"])
@@ -27,6 +27,12 @@ def get_all_group_options(group_code: str, session: SessionType = Depends(get_se
 def get_all_options(session: SessionType = Depends(get_session)):
     options = get_all(session)
     return options
+
+
+@router.get("/{id}")
+def get_option(id: str, session: SessionType = Depends(get_session)):
+    option = get_by_id(id, session)
+    return option
 
 
 @router.post("/")
