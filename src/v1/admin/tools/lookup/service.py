@@ -12,10 +12,16 @@ def get_group(session: SessionType):
     query = session.exec(stmnt)
     results = query.all()
 
-    # TODO:
-    # Change to model_validate and model_dump when this is not async anymore
-    # Async seems to be overkill for this project
-    return {"data": [{"group_code": r[0], "group_desc": r[1]} for r in results]}
+    return {
+        "data": [
+            {
+                "group_code": row[0],
+                "group_desc": row[1],
+            }
+            for row in results
+        ],
+        "total": len(results),
+    }
 
 
 def get_group_options(group_code: str, session: SessionType):
