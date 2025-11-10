@@ -18,9 +18,9 @@ def check_if_department_exists(dept_id: str, session: SessionType):
 
 
 def get_department_by_id(
-    dept_id: str, session: SessionType = Depends(get_session)
+    id: str, session: SessionType = Depends(get_session)
 ):
-    db_dept = session.get(DbDepartment, dept_id)
+    db_dept = session.get(DbDepartment, id)
     if not db_dept:
         raise DepartmentNotFound()
     return db_dept
