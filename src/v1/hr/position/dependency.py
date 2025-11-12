@@ -19,9 +19,9 @@ def check_if_position_exists(pos_id: str, session: SessionType):
 
 
 def get_position_by_id(
-    pos_id: str, session: SessionType = Depends(get_session)
+    id: str, session: SessionType = Depends(get_session)
 ):
-    db_pos = session.get(DbPosition, pos_id)
+    db_pos = session.get(DbPosition, id)
     if not db_pos:
         raise PositionNotFound()
     return db_pos
