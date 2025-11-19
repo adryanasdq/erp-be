@@ -19,32 +19,32 @@ def get_by_id(warehouse_id: str, session: SessionType):
     return result.first()
 
 
-def create(position: DbWarehouse, session: SessionType):
+def create(warehouse: DbWarehouse, session: SessionType):
     try:
-        session.add(position)
+        session.add(warehouse)
         session.commit()
-        session.refresh(position)
-        return Warehouse.model_validate(position)
+        session.refresh(warehouse)
+        return Warehouse.model_validate(warehouse)
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
 
 
-def update(position: DbWarehouse, session: SessionType):
+def update(warehouse: DbWarehouse, session: SessionType):
     try:
         session.commit()
-        session.refresh(position)
-        return Warehouse.model_validate(position)
+        session.refresh(warehouse)
+        return Warehouse.model_validate(warehouse)
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     
 
-def delete(position: DbWarehouse, session: SessionType):
+def delete(warehouse: DbWarehouse, session: SessionType):
     try:
-        session.delete(position)
+        session.delete(warehouse)
         session.commit()
-        return {"message": f"Position with id {position.id} deleted successfully"}
+        return {"message": f"Warehouse with id {warehouse.id} deleted successfully"}
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
