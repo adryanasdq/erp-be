@@ -1,6 +1,8 @@
 from sqlmodel import SQLModel, Field, func, Relationship
 from datetime import datetime
 
+from src.core.models.hr.position import Position
+
 
 class Department(SQLModel, table=True):
     __tablename__ = "departments"

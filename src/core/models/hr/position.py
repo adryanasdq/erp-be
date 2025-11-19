@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field, func, Relationship
 from datetime import datetime
 
 from src.core.models.hr.department import Department
+from src.core.models.hr.employee import Employee
 
 
 class Position(SQLModel, table=True):
