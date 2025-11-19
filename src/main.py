@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.core.settings.database import init_db
 from src.v1.admin.router import admin_router
 from src.v1.hr.router import hr_router
+from src.v1.inventory.router import inventory_router
 
 
 def lifespan(app: FastAPI):
@@ -32,6 +33,7 @@ app.add_middleware(
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(admin_router)
 api_router.include_router(hr_router)
+api_router.include_router(inventory_router)
 
 app.include_router(api_router)
 
