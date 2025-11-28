@@ -54,3 +54,12 @@ def generate_custom_id(prefix: str, session: SessionType) -> str:
     #     next_val = await session.execute(seq)
 
     # return f"{prefix}{join_date}{str(next_val).zfill(4)}"
+
+
+def generate_ref_doc() -> str:
+    """
+    Generate document ref number
+    """
+
+    CUID_GENERATOR: Cuid = Cuid(length=10)
+    return CUID_GENERATOR.generate()
