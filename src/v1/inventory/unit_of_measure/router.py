@@ -8,7 +8,7 @@ from .dependency import get_uom_by_id, validate_uom
 from .service import get_all, get_by_id, create, update, delete
 
 
-router = APIRouter(prefix="/uom", tags=["Unit Of Measure"])
+router = APIRouter(prefix="/uom", tags=["Unit of Measure"])
 
 
 @router.get("/")
