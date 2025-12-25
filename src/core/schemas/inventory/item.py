@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class Item(BaseModel):
     id: Optional[str] = Field(None, readonly=True)
-    code: str
+    sku: str
     name: str
     category: Optional[str] = None
     uom_id: str
@@ -14,7 +14,7 @@ class Item(BaseModel):
         "from_attributes": True,
         "json_schema_extra": {
             "example": {
-                "code": "IE202509001",
+                "sku": "IE202509001",
                 "name": "Laptop",
                 "category": "Electronic",
                 "uom_id": "sabjvbor17",

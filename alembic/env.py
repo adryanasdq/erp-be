@@ -16,6 +16,8 @@ from src.core.models.hr.position import Position
 from src.core.models.inventory.item import Item
 from src.core.models.inventory.uom import UnitOfMeasure
 from src.core.models.inventory.warehouse import Warehouse
+from src.core.models.inventory.stock_balance import StockBalance
+from src.core.models.inventory.stock_movement import StockMovement
 
 
 # this is the Alembic Config object, which provides

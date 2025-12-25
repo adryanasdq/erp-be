@@ -9,7 +9,7 @@ class Item(SQLModel, table=True):
     __table_args__ = {"schema": "main"}
 
     id: str = Field(primary_key=True, index=True, default_factory=generate_cuid)
-    code: str = Field(max_length=15, nullable=False, unique=True)
+    sku: str = Field(max_length=15, nullable=False, unique=True)
     name: str = Field(max_length=50, nullable=False)
     category: str | None = Field(default=None)
     uom_id: str = Field(foreign_key="main.unit_of_measure.id", nullable=False)
