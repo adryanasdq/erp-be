@@ -18,6 +18,7 @@ from src.core.models.inventory.uom import UnitOfMeasure
 from src.core.models.inventory.warehouse import Warehouse
 from src.core.models.inventory.stock_balance import StockBalance
 from src.core.models.inventory.stock_movement import StockMovement
+from src.core.models.inventory.item_uom_conversion import ItemUOMConversion
 
 
 # this is the Alembic Config object, which provides
