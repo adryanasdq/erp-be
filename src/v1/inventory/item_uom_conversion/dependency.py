@@ -8,8 +8,13 @@ from src.core.models.inventory.item_uom_conversion import (
 from src.core.schemas.inventory.item_uom_conversion import ItemUOMConversion
 
 from src.v1.inventory.item.dependency import get_item_by_id
+from src.v1.inventory.unit_of_measure.dependency import get_uom_by_id
 
-from .exception import ItemUOMConversionIdExists, ItemUOMConversionNotFound
+from .exception import (
+    ItemUOMConversionIdExists,
+    ItemUOMConversionNotFound,
+    ItemUOMConversionIncompatible,
+)
 
 
 def check_if_uom_exists(conv_id: str, session: SessionType):
@@ -39,7 +44,7 @@ def get_item_uom_conv_by_uom_id(from_uom_id: str, to_uom_id: str, session: Sessi
     stmnt = select(DbItemUOMConversion).where(
         DbItemUOMConversion.from_uom_id == from_uom_id,
         DbItemUOMConversion.to_uom_id == to_uom_id,
-        DbItemUOMConversion.is_active
+        DbItemUOMConversion.is_active,
     )
     query = session.exec(stmnt)
     db_item_uom_conv = query.first()
@@ -52,6 +57,12 @@ def get_item_uom_conv_by_uom_id(from_uom_id: str, to_uom_id: str, session: Sessi
 def validate_item_uom_conv(
     conv: ItemUOMConversion, session: SessionType, id: str = None
 ):
+    from_uom = get_uom_by_id(conv.from_uom_id, session)
+    to_uom = get_uom_by_id(conv.to_uom_id, session)
+
+    if from_uom.type != to_uom.type:
+        raise ItemUOMConversionIncompatible()
+
     if not id:
         db_item_uom_conv = DbItemUOMConversion(
             **conv.model_dump(exclude_unset=True, exclude={"id"})
