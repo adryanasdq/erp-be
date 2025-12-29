@@ -4,6 +4,9 @@ from sqlmodel import select, Session as SessionType
 from src.core.models.inventory.stock_movement import StockMovement as DbStockMovement
 from src.core.schemas.inventory.stock_movement import StockMovement
 
+from src.core.models.inventory.stock_balance import StockBalance as DBStockBalance
+from src.core.schemas.inventory.stock_balance import StockBalance
+
 
 def get_all(session: SessionType):
     stmnt = select(DbStockMovement)
@@ -19,12 +22,23 @@ def get_by_id(stock_movement_id: str, session: SessionType):
     return result.first()
 
 
-def create(item: DbStockMovement, session: SessionType):
+def create(movement: DbStockMovement, balance: DBStockBalance, session: SessionType):
     try:
-        session.add(item)
+        session.add(movement)
+        session.add(balance)
+
         session.commit()
-        session.refresh(item)
-        return StockMovement.model_validate(item)
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
+    
+
+# def transfer(movements: list[DbStockMovement], session: SessionType):
+#     try:
+#         for movement in movements:
+#             session.add(movement)
+        
+#         session.commit()
+#     except Exception as e:
+#         session.rollback()
+#         raise HTTPException(status_code=400, detail=str(e))

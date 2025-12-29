@@ -1,44 +1,48 @@
 from datetime import datetime
-from fastapi import Depends
-from sqlmodel import Session as SessionType
+from sqlmodel import select, Session as SessionType
 
-from src.core.settings.database import get_session
 from src.core.models.inventory.stock_balance import StockBalance as DbStockBalance
-from src.core.schemas.inventory.stock_balance import StockBalance
+from src.core.schemas.inventory.stock_movement import StockMovement
 
-from .exception import StockBalanceIdExists, StockBalanceNotFound
-from ..item.dependency import get_item_by_id
-from ..warehouse.dependency import get_warehouse_by_id
+from .exception import StockBalanceInsufficent
 
 
-def check_if_stock_balance_exists(stock_balance_id: str, session: SessionType):
-    db_stock_balance = session.get(DbStockBalance, stock_balance_id)
-    if db_stock_balance:
-        raise StockBalanceIdExists()
-    return
+def get_stock_balance(item_id: str, warehouse_id: str, session: SessionType):
+    stmnt = select(DbStockBalance).where(
+        DbStockBalance.item_id == item_id, DbStockBalance.warehouse_id == warehouse_id
+    )
+    query = session.exec(stmnt)
+    db_stock_balance = query.first()
 
-
-def get_stock_balance_by_id(
-    id: str, session: SessionType = Depends(get_session)
-):
-    db_stock_balance = session.get(DbStockBalance, id)
-    if not db_stock_balance:
-        raise StockBalanceNotFound()
     return db_stock_balance
 
 
-def validate_stock_balance(stock_balance: StockBalance, session: SessionType, id: str = None):
-    get_item_by_id(stock_balance.item_id)
-    get_warehouse_by_id(stock_balance.warehouse_id)
+def validate_stock_balance(stock_movement: StockMovement, session: SessionType):
+    db_stock_balance = get_stock_balance(
+        stock_movement.item_id, stock_movement.warehouse_id, session
+    )
 
-    if not id:
+    if not db_stock_balance:
         db_stock_balance = DbStockBalance(
-            **stock_balance.model_dump(exclude_unset=True, exclude={"id"})
+            item_id=stock_movement.item_id,
+            warehouse_id=stock_movement.warehouse_id,
+            qty=stock_movement.qty,
+            qty_reserved=0,
         )
     else:
-        db_stock_balance = get_stock_balance_by_id(id, session)
-        for key, attr in stock_balance.model_dump(exclude_unset=True).items():
-            setattr(db_stock_balance, key, attr)
+        #TODO: need to convert uom
+
+        if stock_movement.type == "in":
+            db_stock_balance.qty += stock_movement.qty
+
+        if stock_movement.type == "out":
+            if db_stock_balance.qty < stock_movement.qty:
+                raise StockBalanceInsufficent()
+            
+            db_stock_balance.qty -= stock_movement.qty
+
+        if stock_movement.type == "adj":
+            db_stock_balance.qty = stock_movement.qty
 
     db_stock_balance.modified_date = datetime.now()
     return db_stock_balance

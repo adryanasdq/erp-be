@@ -8,4 +8,3 @@ class StockBalance(BaseModel):
     warehouse_id: str
     qty: int
     qty_reserved: int
-    qty_available: int

@@ -1,10 +1,8 @@
 from datetime import datetime
-from fastapi import Depends
 from sqlmodel import Session as SessionType
 
-from src.core.settings.database import get_session
 from src.core.models.inventory.stock_movement import StockMovement as DbStockMovement
-from src.core.schemas.inventory.stock_movement import StockMovement
+from src.core.schemas.inventory.stock_movement import StockMovement, StockTransfer
 
 from .exception import StockMovementIdExists
 from ..item.dependency import get_item_by_id
@@ -24,8 +22,45 @@ def validate_stock_movement(stock_movement: StockMovement, session: SessionType)
     get_warehouse_by_id(stock_movement.warehouse_id, session)
     get_uom_by_id(stock_movement.uom_id, session)
 
+    # Logic for every scenario here
+    # BUY/IN -> qty + -> create sm + update item = 2 transactions
+    # SELL/OUT -> qty - -> create sm + update item = 2 transactions
+    # TRANSFER -> qty + at target warehouse, qty - at target source -> create 2 sm + 2 update item = 4 transactions
+    # ADJUST -> qty + / - -> create sm + update item = 2 transactons
+
     db_stock_movement = DbStockMovement(
         **stock_movement.model_dump(exclude_unset=True, exclude={"id"})
     )
 
+    db_stock_movement.created_date = datetime.now()
+
     return db_stock_movement
+
+
+# def validate_stock_transfer(stock_transfer: StockTransfer, session: SessionType):
+#     get_item_by_id(stock_transfer.item_id, session)
+#     get_warehouse_by_id(stock_transfer.warehouse_from_id, session)
+#     get_warehouse_by_id(stock_transfer.warehouse_to_id, session)
+#     get_uom_by_id(stock_transfer.uom_id, session)
+
+#     db_stock_transfers = []
+#     db_transfer_out = DbStockMovement(
+#         type="out",
+#         warehouse_id=stock_transfer.warehouse_from_id,
+#         **stock_transfer.model_dump(
+#             exclude_unset=True, exclude={"id", "warehouse_from_id", "warehouse_to_id"}
+#         )
+#     )
+
+#     db_transfer_in = DbStockMovement(
+#         type="in",
+#         warehouse_id=stock_transfer.warehouse_to_id,
+#         **stock_transfer.model_dump(
+#             exclude_unset=True, exclude={"id", "warehouse_from_id", "warehouse_to_id"}
+#         )
+#     )
+
+#     db_stock_transfers.append(db_transfer_out)
+#     db_stock_transfers.append(db_transfer_in)
+
+#     return db_stock_transfers
