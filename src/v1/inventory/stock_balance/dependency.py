@@ -4,6 +4,8 @@ from sqlmodel import select, Session as SessionType
 from src.core.models.inventory.stock_balance import StockBalance as DbStockBalance
 from src.core.schemas.inventory.stock_movement import StockMovement, StockTransfer
 
+from src.v1.inventory.item_uom_conversion.dependency import get_conv_factor_to_base
+
 from .exception import StockBalanceInsufficent
 
 
@@ -22,27 +24,30 @@ def validate_stock_balance(stock_movement: StockMovement, session: SessionType):
         stock_movement.item_id, stock_movement.warehouse_id, session
     )
 
+    factor = get_conv_factor_to_base(
+        stock_movement.item_id, stock_movement.uom_id, session
+    )
+    converted_qty = stock_movement.qty * factor
+
     if not db_stock_balance:
         db_stock_balance = DbStockBalance(
             item_id=stock_movement.item_id,
             warehouse_id=stock_movement.warehouse_id,
-            qty=stock_movement.qty,
+            qty=converted_qty,
             qty_reserved=0,
         )
     else:
-        # TODO: need to convert uom
-
         if stock_movement.type == "in":
-            db_stock_balance.qty += stock_movement.qty
+            db_stock_balance.qty += converted_qty
 
         if stock_movement.type == "out":
-            if db_stock_balance.qty < stock_movement.qty:
+            if db_stock_balance.qty < converted_qty:
                 raise StockBalanceInsufficent()
 
-            db_stock_balance.qty -= stock_movement.qty
+            db_stock_balance.qty -= converted_qty
 
         if stock_movement.type == "adj":
-            db_stock_balance.qty = stock_movement.qty
+            db_stock_balance.qty = converted_qty
 
     db_stock_balance.modified_date = datetime.now()
     return db_stock_balance
@@ -51,18 +56,23 @@ def validate_stock_balance(stock_movement: StockMovement, session: SessionType):
 def validate_balance_transfer(stock_transfer: StockTransfer, session: SessionType):
     db_stock_balances = []
     db_stock_balance_out = get_stock_balance(
-        stock_transfer.item_id, stock_transfer.warehouse_id_from, session
+        stock_transfer.item_id, stock_transfer.from_warehouse_id, session
     )
 
     db_stock_balance_in = get_stock_balance(
-        stock_transfer.item_id, stock_transfer.warehouse_id_to, session
+        stock_transfer.item_id, stock_transfer.to_warehouse_id, session
     )
 
-    if db_stock_balance_out.qty < stock_transfer.qty:
+    factor = get_conv_factor_to_base(
+        stock_transfer.item_id, stock_transfer.uom_id, session
+    )
+    converted_qty = stock_transfer.qty * factor
+
+    if db_stock_balance_out.qty < converted_qty:
         raise StockBalanceInsufficent()
 
-    db_stock_balance_out.qty -= stock_transfer.qty
-    db_stock_balance_in.qty += stock_transfer.qty
+    db_stock_balance_out.qty -= converted_qty
+    db_stock_balance_in.qty += converted_qty
 
     db_stock_balances.append(db_stock_balance_out)
     db_stock_balances.append(db_stock_balance_in)

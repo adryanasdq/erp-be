@@ -16,7 +16,7 @@ class StockMovement(BaseModel):
             "example": {
                 "item_id": "mxpenx4lgd",
                 "warehouse_id": "e4yard1uj5",
-                "type": "IN",
+                "type": "in",
                 "qty": 5,
                 "uom_id": "n4h26rnl0i"
             }
@@ -26,8 +26,8 @@ class StockMovement(BaseModel):
 
 class StockTransfer(BaseModel):
     item_id: str
-    warehouse_id_from: str
-    warehouse_id_to: str
+    from_warehouse_id: str
+    to_warehouse_id: str
     qty: int
     uom_id: str
 
@@ -36,8 +36,8 @@ class StockTransfer(BaseModel):
         "json_schema_extra": {
             "example": {
                 "item_id": "mxpenx4lgd",
-                "warehouse_id_from": "e4yard1uj5",
-                "warehouse_id_to": "eya110dauj",
+                "from_warehouse_id": "e4yard1uj5",
+                "to_warehouse_id": "eya110dauj",
                 "qty": 2,
                 "uom_id": "n4h26rnl0i"
             }

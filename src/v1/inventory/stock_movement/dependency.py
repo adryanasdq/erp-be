@@ -33,24 +33,24 @@ def validate_stock_movement(stock_movement: StockMovement, session: SessionType)
 
 def validate_stock_transfer(stock_transfer: StockTransfer, session: SessionType):
     get_item_by_id(stock_transfer.item_id, session)
-    get_warehouse_by_id(stock_transfer.warehouse_id_from, session)
-    get_warehouse_by_id(stock_transfer.warehouse_id_to, session)
+    get_warehouse_by_id(stock_transfer.from_warehouse_id, session)
+    get_warehouse_by_id(stock_transfer.to_warehouse_id, session)
     get_uom_by_id(stock_transfer.uom_id, session)
 
     db_stock_transfers = []
     db_transfer_out = DbStockMovement(
         type="out",
-        warehouse_id=stock_transfer.warehouse_id_from,
+        warehouse_id=stock_transfer.from_warehouse_id,
         **stock_transfer.model_dump(
-            exclude_unset=True, exclude={"id", "warehouse_id_from", "warehouse_id_to"}
+            exclude_unset=True, exclude={"id", "from_warehouse_id", "to_warehouse_id"}
         ),
     )
 
     db_transfer_in = DbStockMovement(
         type="in",
-        warehouse_id=stock_transfer.warehouse_id_to,
+        warehouse_id=stock_transfer.to_warehouse_id,
         **stock_transfer.model_dump(
-            exclude_unset=True, exclude={"id", "warehouse_id_from", "warehouse_id_to"}
+            exclude_unset=True, exclude={"id", "from_warehouse_id", "to_warehouse_id"}
         ),
     )
 
