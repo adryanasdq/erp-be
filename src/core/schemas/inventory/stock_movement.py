@@ -28,7 +28,6 @@ class StockTransfer(BaseModel):
     item_id: str
     warehouse_id_from: str
     warehouse_id_to: str
-    type: str
     qty: int
     uom_id: str
 
@@ -36,11 +35,11 @@ class StockTransfer(BaseModel):
         "from_attributes": True,
         "json_schema_extra": {
             "example": {
-                "item_id": "sabjvbor17",
-                "warehouse_id": "x1b3vmorte",
-                "type": "IN",
-                "qty": 5,
-                "uom_id": "p2kedncndm"
+                "item_id": "mxpenx4lgd",
+                "warehouse_id_from": "e4yard1uj5",
+                "warehouse_id_to": "eya110dauj",
+                "qty": 2,
+                "uom_id": "n4h26rnl0i"
             }
         }
     }

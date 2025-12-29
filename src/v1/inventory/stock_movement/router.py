@@ -4,7 +4,10 @@ from sqlmodel import Session as SessionType
 from src.core.schemas.inventory.stock_movement import StockMovement, StockTransfer
 from src.core.settings.database import get_session
 
-from src.v1.inventory.stock_balance.dependency import validate_stock_balance
+from src.v1.inventory.stock_balance.dependency import (
+    validate_stock_balance,
+    validate_balance_transfer,
+)
 
 from .dependency import validate_stock_movement, validate_stock_transfer
 from .service import get_all, get_by_id, create, transfer
@@ -34,9 +37,10 @@ def create_stock_movement(
     return create(validated_stock_movement, validated_stock_balance, session)
 
 
-# @router.post("/transfer")
-# def create_transfer_movement(
-#     data: StockTransfer, session: SessionType = Depends(get_session)
-# ):
-#     validated_stock_transfer = validate_stock_transfer(data, session)
-#     return transfer(validated_stock_transfer, session)
+@router.post("/transfer")
+def create_stock_transfer(
+    data: StockTransfer, session: SessionType = Depends(get_session)
+):
+    validated_stock_transfer = validate_stock_transfer(data, session)
+    validated_balance_transfer = validate_balance_transfer(data, session)
+    return transfer(validated_stock_transfer, validated_balance_transfer, session)

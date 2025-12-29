@@ -17,24 +17,3 @@ def get_by_id(stock_balance_id: str, session: SessionType):
 
     result = session.exec(stmnt)
     return result.first()
-
-
-def create(item: DbStockBalance, session: SessionType):
-    try:
-        session.add(item)
-        session.commit()
-        session.refresh(item)
-        return StockBalance.model_validate(item)
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-def update(item: DbStockBalance, session: SessionType):
-    try:
-        session.commit()
-        session.refresh(item)
-        return StockBalance.model_validate(item)
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(status_code=400, detail=str(e))

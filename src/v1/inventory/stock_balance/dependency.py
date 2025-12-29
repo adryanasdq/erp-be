@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlmodel import select, Session as SessionType
 
 from src.core.models.inventory.stock_balance import StockBalance as DbStockBalance
-from src.core.schemas.inventory.stock_movement import StockMovement
+from src.core.schemas.inventory.stock_movement import StockMovement, StockTransfer
 
 from .exception import StockBalanceInsufficent
 
@@ -30,7 +30,7 @@ def validate_stock_balance(stock_movement: StockMovement, session: SessionType):
             qty_reserved=0,
         )
     else:
-        #TODO: need to convert uom
+        # TODO: need to convert uom
 
         if stock_movement.type == "in":
             db_stock_balance.qty += stock_movement.qty
@@ -38,7 +38,7 @@ def validate_stock_balance(stock_movement: StockMovement, session: SessionType):
         if stock_movement.type == "out":
             if db_stock_balance.qty < stock_movement.qty:
                 raise StockBalanceInsufficent()
-            
+
             db_stock_balance.qty -= stock_movement.qty
 
         if stock_movement.type == "adj":
@@ -46,3 +46,25 @@ def validate_stock_balance(stock_movement: StockMovement, session: SessionType):
 
     db_stock_balance.modified_date = datetime.now()
     return db_stock_balance
+
+
+def validate_balance_transfer(stock_transfer: StockTransfer, session: SessionType):
+    db_stock_balances = []
+    db_stock_balance_out = get_stock_balance(
+        stock_transfer.item_id, stock_transfer.warehouse_id_from, session
+    )
+
+    db_stock_balance_in = get_stock_balance(
+        stock_transfer.item_id, stock_transfer.warehouse_id_to, session
+    )
+
+    if db_stock_balance_out.qty < stock_transfer.qty:
+        raise StockBalanceInsufficent()
+
+    db_stock_balance_out.qty -= stock_transfer.qty
+    db_stock_balance_in.qty += stock_transfer.qty
+
+    db_stock_balances.append(db_stock_balance_out)
+    db_stock_balances.append(db_stock_balance_in)
+
+    return db_stock_balances
