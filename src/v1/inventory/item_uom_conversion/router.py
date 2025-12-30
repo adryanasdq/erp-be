@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session as SessionType
 
-from src.core.schemas.inventory.item_uom_conversion import ItemUOMConversion
+from src.core.schemas.inventory.item_uom_conversion import ItemUOMConversion, ChangeStatusConversion
 from src.core.settings.database import get_session
 
-from .dependency import get_item_uom_conv_by_id, validate_item_uom_conv
-from .service import get_all, get_by_id, create, unactive
+from .dependency import validate_item_uom_conv
+from .service import get_all, get_by_id, create, change_status
 
 
 router = APIRouter(prefix="/item_uom_conversion", tags=["Item UOM Conversion"])
@@ -24,14 +24,18 @@ def get_conversion_by_id(id: str, session=Depends(get_session)):
 
 
 @router.post("/")
-def create_conversion(data: ItemUOMConversion, session: SessionType = Depends(get_session)):
+def create_conversion(
+    data: ItemUOMConversion, session: SessionType = Depends(get_session)
+):
     validated_item_uom_conv = validate_item_uom_conv(data, session)
     return create(validated_item_uom_conv, session)
 
 
-@router.patch("/")
-def unactive_conversion(
-    data: ItemUOMConversion = Depends(get_item_uom_conv_by_id),
+@router.patch("/{id}")
+def change_conversion_status(
+    id: str,
+    data: ChangeStatusConversion,
     session: SessionType = Depends(get_session),
 ):
-    return unactive(data, session)
+    conversion = get_by_id(id, session)
+    return change_status(conversion, data, session)

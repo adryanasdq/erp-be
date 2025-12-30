@@ -14,6 +14,7 @@ from .exception import (
     ItemUOMConversionIdExists,
     ItemUOMConversionNotFound,
     ItemUOMConversionIncompatible,
+    ItemUOMConversionAlreadyExists,
 )
 
 
@@ -21,6 +22,20 @@ def check_if_uom_exists(conv_id: str, session: SessionType):
     db_item_uom_conv = session.get(DbItemUOMConversion, conv_id)
     if db_item_uom_conv:
         raise ItemUOMConversionIdExists()
+    return
+
+
+def check_if_uom_conv_exists(conv: ItemUOMConversion, session: SessionType):
+    stmnt = select(DbItemUOMConversion).where(
+        DbItemUOMConversion.item_id == conv.item_id,
+        DbItemUOMConversion.from_uom_id == conv.from_uom_id,
+        DbItemUOMConversion.to_uom_id == conv.to_uom_id,
+    )
+    query = session.exec(stmnt)
+    db_item_uom_conv = query.first()
+
+    if db_item_uom_conv:
+        raise ItemUOMConversionAlreadyExists()
     return
 
 
@@ -57,6 +72,8 @@ def get_item_uom_conv_by_uom_id(from_uom_id: str, to_uom_id: str, session: Sessi
 def validate_item_uom_conv(
     conv: ItemUOMConversion, session: SessionType, id: str = None
 ):
+    check_if_uom_conv_exists(conv, session)
+
     from_uom = get_uom_by_id(conv.from_uom_id, session)
     to_uom = get_uom_by_id(conv.to_uom_id, session)
 

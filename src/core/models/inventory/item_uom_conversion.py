@@ -1,5 +1,6 @@
-from sqlmodel import SQLModel, Field, UniqueConstraint
+from sqlmodel import SQLModel, Field, UniqueConstraint, func
 from decimal import Decimal
+from datetime import datetime
 
 from src.utils import generate_cuid
 
@@ -21,4 +22,5 @@ class ItemUOMConversion(SQLModel, table=True):
     from_uom_id: str = Field(foreign_key="main.unit_of_measure.id", nullable=False)
     to_uom_id: str = Field(foreign_key="main.unit_of_measure.id", nullable=False)
     factor: Decimal = Field(nullable=False)
-    is_active: bool = Field(nullable=True)
+    is_active: bool = Field(default=True)
+    created_date: datetime = Field(default=func.now())

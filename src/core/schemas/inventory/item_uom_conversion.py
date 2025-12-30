@@ -23,3 +23,7 @@ class ItemUOMConversion(BaseModel):
             }
         }
     }
+
+
+class ChangeStatusConversion(BaseModel):
+    is_active: bool
