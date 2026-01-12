@@ -63,6 +63,14 @@ def validate_balance_transfer(stock_transfer: StockTransfer, session: SessionTyp
         stock_transfer.item_id, stock_transfer.to_warehouse_id, session
     )
 
+    if not db_stock_balance_in:
+        db_stock_balance_in = DbStockBalance(
+            item_id=stock_transfer.item_id,
+            warehouse_id=stock_transfer.to_warehouse_id,
+            qty=0,
+            qty_reserved=0,
+        )
+
     factor = get_conv_factor_to_base(
         stock_transfer.item_id, stock_transfer.uom_id, session
     )
