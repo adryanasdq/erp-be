@@ -30,6 +30,9 @@ def validate_stock_balance(stock_movement: StockMovement, session: SessionType):
     converted_qty = stock_movement.qty * factor
 
     if not db_stock_balance:
+        if stock_movement.type == "out":
+             raise StockBalanceInsufficent()
+             
         db_stock_balance = DbStockBalance(
             item_id=stock_movement.item_id,
             warehouse_id=stock_movement.warehouse_id,
@@ -45,6 +48,12 @@ def validate_stock_balance(stock_movement: StockMovement, session: SessionType):
                 raise StockBalanceInsufficent()
 
             db_stock_balance.qty -= converted_qty
+            
+            # --- NEW LOGIC FOR SALES ---
+            # If this 'out' movement is from a Delivery, 
+            # we must reduce the reservation too.
+            if db_stock_balance.qty_reserved >= converted_qty:
+                db_stock_balance.qty_reserved -= converted_qty
 
         if stock_movement.type == "adj":
             db_stock_balance.qty = converted_qty
