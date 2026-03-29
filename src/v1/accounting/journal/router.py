@@ -5,7 +5,7 @@ from src.core.settings.database import get_session
 from .dependency import validate_journal_entry
 from .service import commit_journal_entry
 
-router = APIRouter(prefix="/accounting/journals", tags=["Accounting"])
+router = APIRouter(prefix="/journals", tags=["Journal"])
 
 
 @router.post("/")

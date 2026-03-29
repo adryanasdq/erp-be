@@ -7,6 +7,7 @@ from src.v1.hr.router import hr_router
 from src.v1.inventory.router import inventory_router
 from src.v1.purchasing.router import purchasing_router
 from src.v1.sales.router import sales_router
+from src.v1.accounting.router import accounting_router
 
 
 def lifespan(app: FastAPI):
@@ -38,6 +39,7 @@ api_router.include_router(hr_router)
 api_router.include_router(inventory_router)
 api_router.include_router(purchasing_router)
 api_router.include_router(sales_router)
+api_router.include_router(accounting_router)
 
 app.include_router(api_router)
 
