@@ -4,9 +4,13 @@ from src.core.models.sales.delivery import (
     Delivery as DbDelivery,
     DeliveryLine as DbDeliveryLine,
 )
+from src.core.schemas.accounting.journal import JournalEntrySchema, JournalLineSchema
 from src.core.schemas.sales.delivery import DeliverySchema
 
-# Inventory Integration
+from src.v1.accounting.journal.dependency import (
+    get_account_by_code,
+    validate_journal_entry,
+)
 from src.v1.inventory.stock_movement.dependency import validate_stock_movement
 from src.v1.inventory.stock_balance.dependency import validate_stock_balance
 from src.core.schemas.inventory.stock_movement import (
@@ -71,4 +75,29 @@ def validate_delivery_processing(data: DeliverySchema, session: SessionType):
     all_done = all(l.qty_delivered >= l.qty_ordered for l in db_so.lines)
     db_so.status = "DELIVERED" if all_done else "PARTIALLY_DELIVERED"
 
-    return {"delivery": db_delivery, "inventory_updates": inventory_updates}
+    # 4. Calculate COGS (Cost of Goods Sold)
+    # Usually based on the Weighted Average Cost of the item
+    total_cost = sum(line.qty * 60 for line in data.lines)  # Example: Cost is $60/unit
+
+    # 5. Prepare COGS Journal
+    # Logic: Dr COGS (5010), Cr Inventory (1010)
+    cogs_account = get_account_by_code("5010", session)
+    inv_account = get_account_by_code("1010", session)
+
+    journal_data = JournalEntrySchema(
+        reference_type="DELIVERY",
+        reference_id=db_delivery.id,
+        description=f"COGS for Delivery {db_delivery.id[:8]}",
+        lines=[
+            JournalLineSchema(account_id=cogs_account.id, debit=total_cost),
+            JournalLineSchema(account_id=inv_account.id, credit=total_cost),
+        ],
+    )
+
+    db_journal = validate_journal_entry(journal_data, session)
+
+    return {
+        "delivery": db_delivery,
+        "inventory_updates": inventory_updates,
+        "journal_entry": db_journal,
+    }
