@@ -20,6 +20,10 @@ from src.core.models.inventory.stock_balance import StockBalance
 from src.core.models.inventory.stock_movement import StockMovement
 from src.core.models.inventory.item_uom_conversion import ItemUOMConversion
 
+from src.core.models.purchasing.supplier import Supplier
+from src.core.models.purchasing.purchase_order import PurchaseOrder
+from src.core.models.purchasing.goods_receipt import GoodsReceipt
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
