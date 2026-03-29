@@ -28,6 +28,8 @@ from src.core.models.sales.customer import Customer
 from src.core.models.sales.sales_order import SalesOrder, SalesOrderLine
 from src.core.models.sales.delivery import Delivery, DeliveryLine
 
+from src.core.models.accounting.journal import Account, JournalEntry, JournalEntryLine
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
