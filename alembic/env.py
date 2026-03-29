@@ -24,6 +24,9 @@ from src.core.models.purchasing.supplier import Supplier
 from src.core.models.purchasing.purchase_order import PurchaseOrder
 from src.core.models.purchasing.goods_receipt import GoodsReceipt
 
+from src.core.models.sales.customer import Customer
+from src.core.models.sales.sales_order import SalesOrder, SalesOrderLine
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
