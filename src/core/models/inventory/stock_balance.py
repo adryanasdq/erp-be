@@ -23,3 +23,7 @@ class StockBalance(SQLModel, table=True):
     modified_date: datetime = Field(
         default=func.now(), sa_column_kwargs={"onupdate": func.now()}
     )
+
+    @property
+    def qty_available(self) -> float:
+        return self.qty_on_hand - self.qty_reserved
