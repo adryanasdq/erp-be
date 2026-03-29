@@ -12,6 +12,9 @@ def commit_grn_transaction(processed_data: dict, session: SessionType):
             session.add(mov)
             session.add(bal)
 
+        # 3. Add Accounting Entry
+        session.add(processed_data["journal_entry"])
+
         session.commit()
         session.refresh(processed_data["grn"])
         return processed_data["grn"]

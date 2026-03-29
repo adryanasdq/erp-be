@@ -4,8 +4,13 @@ from src.core.models.purchasing.goods_receipt import (
     GoodsReceipt as DbGRN,
     GoodsReceiptLine as DbGRNLine,
 )
+from src.core.schemas.accounting.journal import JournalEntrySchema, JournalLineSchema
 from src.core.schemas.purchasing.goods_receipt import GoodsReceiptSchema
 
+from src.v1.accounting.journal.dependency import (
+    get_account_by_code,
+    validate_journal_entry,
+)
 from src.v1.inventory.stock_movement.dependency import validate_stock_movement
 from src.v1.inventory.stock_balance.dependency import validate_stock_balance
 from src.core.schemas.inventory.stock_movement import (
@@ -59,7 +64,32 @@ def validate_grn_processing(data: GoodsReceiptSchema, session: SessionType):
 
         inventory_updates.append((db_mov, db_bal))
 
-    return {"grn": db_grn, "inventory_updates": inventory_updates}
+    # 4. Calculate Total Value for Accounting
+    # In real life, you'd pull the price from the PO Line
+    total_value = sum(line.qty * 100 for line in data.lines)  # Example: $100/unit
+
+    # 5. Prepare Journal Entry
+    # Logic: Dr Inventory (1010), Cr Accounts Payable (2010)
+    inv_account = get_account_by_code("1010", session)  # Inventory Account
+    ap_account = get_account_by_code("2010", session)  # AP Account
+
+    journal_data = JournalEntrySchema(
+        reference_type="GRN",
+        reference_id=db_grn.id,
+        description=f"Automated entry for GRN {db_grn.id[:8]}",
+        lines=[
+            JournalLineSchema(account_id=inv_account.id, debit=total_value),
+            JournalLineSchema(account_id=ap_account.id, credit=total_value),
+        ],
+    )
+
+    db_journal = validate_journal_entry(journal_data, session)
+
+    return {
+        "grn": db_grn,
+        "inventory_updates": inventory_updates,
+        "journal_entry": db_journal,
+    }
 
 
 def validate_grn_cancellation(grn_id: str, session: SessionType):
