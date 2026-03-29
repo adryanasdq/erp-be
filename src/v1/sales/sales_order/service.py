@@ -1,6 +1,14 @@
 from fastapi import HTTPException
-from sqlmodel import Session as SessionType
+from sqlmodel import Session as SessionType, select
 from src.core.models.sales.sales_order import SalesOrder as DbSO
+
+
+def get_all(session: SessionType):
+    stmnt = select(DbSO)
+
+    result = session.exec(stmnt)
+    return result.all()
+
 
 def commit_so_transaction(db_so: DbSO, session: SessionType):
     try:
