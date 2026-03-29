@@ -26,6 +26,7 @@ from src.core.models.purchasing.goods_receipt import GoodsReceipt
 
 from src.core.models.sales.customer import Customer
 from src.core.models.sales.sales_order import SalesOrder, SalesOrderLine
+from src.core.models.sales.delivery import Delivery, DeliveryLine
 
 
 # this is the Alembic Config object, which provides

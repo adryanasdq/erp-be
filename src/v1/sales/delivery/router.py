@@ -5,7 +5,6 @@ from src.core.schemas.sales.delivery import DeliverySchema
 from .dependency import validate_delivery_processing
 from .service import commit_delivery_transaction
 
-
 router = APIRouter(prefix="/deliveries", tags=["Deliveries"])
 
 @router.post("/")

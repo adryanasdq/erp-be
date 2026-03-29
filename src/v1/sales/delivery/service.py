@@ -3,10 +3,10 @@ from sqlmodel import Session as SessionType
 
 def commit_delivery_transaction(processed_data: dict, session: SessionType):
     try:
-        # Add the Header and Lines
+        # Add the Delivery Header & Lines
         session.add(processed_data["delivery"])
         
-        # Add all pre-calculated movements and balance updates
+        # Add all pre-calculated Inventory movements/balances
         for mov, bal in processed_data["inventory_updates"]:
             session.add(mov)
             session.add(bal)
