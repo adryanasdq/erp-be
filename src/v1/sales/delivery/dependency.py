@@ -7,10 +7,8 @@ from src.core.models.sales.delivery import (
 from src.core.schemas.accounting.journal import JournalEntrySchema, JournalLineSchema
 from src.core.schemas.sales.delivery import DeliverySchema
 
-from src.v1.accounting.journal.dependency import (
-    get_account_by_code,
-    validate_journal_entry,
-)
+from src.v1.accounting.journal.dependency import validate_journal_entry
+from src.v1.accounting.account.dependency import get_account_by_code
 from src.v1.inventory.stock_movement.dependency import validate_stock_movement
 from src.v1.inventory.stock_balance.dependency import validate_stock_balance
 from src.core.schemas.inventory.stock_movement import (

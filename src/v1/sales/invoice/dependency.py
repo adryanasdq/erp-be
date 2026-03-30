@@ -1,10 +1,8 @@
 from sqlmodel import Session as SessionType, select
 from src.core.models.sales.invoice import Invoice as DbInvoice
 from src.core.schemas.sales.invoice import InvoiceSchema
-from src.v1.accounting.journal.dependency import (
-    get_account_by_code,
-    validate_journal_entry,
-)
+from src.v1.accounting.journal.dependency import validate_journal_entry
+from src.v1.accounting.account.dependency import get_account_by_code
 from src.core.schemas.accounting.journal import JournalEntrySchema, JournalLineSchema
 from .exception import DuplicateInvoiceNumber, InvoiceNotFound
 

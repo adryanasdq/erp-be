@@ -30,6 +30,7 @@ from src.core.models.sales.delivery import Delivery, DeliveryLine
 from src.core.models.sales.invoice import Invoice
 
 from src.core.models.accounting.journal import Account, JournalEntry, JournalEntryLine
+from src.core.models.accounting.account import Account
 
 
 # this is the Alembic Config object, which provides

@@ -1,23 +1,15 @@
 from datetime import datetime
 from typing import List, Optional
 from sqlmodel import SQLModel, Field, Relationship
-
-
-class Account(SQLModel, table=True):
-    __tablename__ = "accounts"
-    id: Optional[str] = Field(default=None, primary_key=True)
-    code: str = Field(index=True, unique=True)
-    name: str
-    type: str  # ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE
-    active: bool = Field(default=True)
+from .account import Account
 
 
 class JournalEntry(SQLModel, table=True):
     __tablename__ = "journal_entries"
     id: Optional[str] = Field(default=None, primary_key=True)
     date: datetime = Field(default_factory=datetime.now)
-    reference_type: str  # e.g., "GRN", "DELIVERY", "INVOICE"
-    reference_id: str  # UUID of the source document
+    reference_type: str
+    reference_id: str
     description: Optional[str] = None
 
     lines: List["JournalEntryLine"] = Relationship(back_populates="journal_entry")

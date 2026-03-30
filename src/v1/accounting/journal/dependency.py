@@ -21,10 +21,3 @@ def validate_journal_entry(data: JournalEntrySchema, session: SessionType):
     db_entry.lines = [DbLine(**line.model_dump()) for line in data.lines]
 
     return db_entry
-
-
-def get_account_by_code(code: str, session: SessionType):
-    account = session.exec(select(DbAccount).where(DbAccount.code == code)).first()
-    if not account:
-        raise AccountNotFound(code)
-    return account
