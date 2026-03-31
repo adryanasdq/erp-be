@@ -5,6 +5,7 @@ from sqlmodel import SQLModel, Field
 
 class Invoice(SQLModel, table=True):
     __tablename__ = "invoices"
+    __table_args__ = {"schema": "main"}
     
     id: Optional[str] = Field(default=None, primary_key=True)
     invoice_number: str = Field(index=True, unique=True)

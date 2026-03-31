@@ -1,12 +1,24 @@
+from fastapi import HTTPException
 from sqlmodel import Session as SessionType
+from src.core.models.accounting.journal import JournalEntry
 
 
-def commit_journal_entry(db_entry, session: SessionType):
+def create(journal: JournalEntry, session: SessionType):
     try:
-        session.add(db_entry)
+        session.add(journal)
         session.commit()
-        session.refresh(db_entry)
-        return db_entry
+        session.refresh(journal)
+        return journal
     except Exception as e:
         session.rollback()
-        raise e
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+def delete(journal: JournalEntry, session: SessionType):
+    try:
+        session.delete(journal)
+        session.commit()
+        return {"message": f"Journal Entry {journal.id} deleted successfully"}
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=400, detail=str(e))

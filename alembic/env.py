@@ -29,7 +29,7 @@ from src.core.models.sales.sales_order import SalesOrder, SalesOrderLine
 from src.core.models.sales.delivery import Delivery, DeliveryLine
 from src.core.models.sales.invoice import Invoice
 
-from src.core.models.accounting.journal import Account, JournalEntry, JournalEntryLine
+from src.core.models.accounting.journal import JournalEntry, JournalEntryLine
 from src.core.models.accounting.account import Account
 
 
