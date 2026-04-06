@@ -13,6 +13,7 @@ class Item(SQLModel, table=True):
     name: str = Field(max_length=50, nullable=False)
     category: str | None = Field(default=None)
     uom_id: str = Field(foreign_key="main.unit_of_measure.id", nullable=False)
+    supplier_id: str = Field(foreign_key="main.suppliers.id", nullable=False)
     is_hidden: bool = Field(default=False)
     modified_date: datetime = Field(
         default=func.now(), sa_column_kwargs={"onupdate": func.now()}
