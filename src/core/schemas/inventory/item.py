@@ -8,6 +8,7 @@ class Item(BaseModel):
     name: str
     category: Optional[str] = None
     uom_id: str
+    supplier_id: str
     is_hidden: bool
 
     model_config = {
@@ -18,6 +19,7 @@ class Item(BaseModel):
                 "name": "Laptop",
                 "category": "Electronic",
                 "uom_id": "sabjvbor17",
+                "supplier_id": "qdv1cea6zr",
                 "is_hidden": False
             }
         }

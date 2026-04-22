@@ -53,7 +53,7 @@ def validate_grn_processing(data: GoodsReceiptSchema, session: SessionType):
             qty=line.qty,
             uom_id=line.uom_id,
             type="in",
-            reference=f"GRN-{db_grn.id[:8]}",
+            reference=f"GRN-XXX",   # TODO: Generate a proper reference, maybe using GRN number or ID after creation
         )
 
         # Pre-calculate movement and balance using your Inventory Dependencies
@@ -69,12 +69,12 @@ def validate_grn_processing(data: GoodsReceiptSchema, session: SessionType):
     # 5. Prepare Journal Entry
     # Logic: Dr Inventory (1010), Cr Accounts Payable (2010)
     inv_account = get_account_by_code("1010", session)  # Inventory Account
-    ap_account = get_account_by_code("2010", session)  # AP Account
+    ap_account = get_account_by_code("1010", session)  # AP Account
 
     journal_data = JournalEntrySchema(
-        reference_type="GRN",
+        reference_type="GRN", 
         reference_id=db_grn.id,
-        description=f"Automated entry for GRN {db_grn.id[:8]}",
+        description=f"Automated entry for GRN XXX",  # TODO: Add more details in description
         lines=[
             JournalLineSchema(account_id=inv_account.id, debit=total_value),
             JournalLineSchema(account_id=ap_account.id, credit=total_value),

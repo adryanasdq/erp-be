@@ -28,7 +28,10 @@ def validate_journal_entry(data: DbJournal, session: SessionType, id: str = None
             **data.model_dump(exclude_unset=True, exclude={"id", "lines"})
         )
         # Re-attach lines (SQLModel handles the relationship)
-        db_journal.lines = data.lines
+        # TODO: fix
+        # for line in data.lines:
+        #     db_journal.lines.append(line)
+
     else:
         # Update Logic (following your Supplier Pattern)
         db_journal = get_journal_by_id(id, session)
