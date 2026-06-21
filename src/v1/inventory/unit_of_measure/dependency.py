@@ -1,18 +1,24 @@
 from datetime import datetime
 from fastapi import Depends
-from sqlmodel import Session as SessionType
+from sqlmodel import Session as SessionType, select, or_
 
 from src.core.settings.database import get_session
 from src.core.models.inventory.uom import UnitOfMeasure as DbUnitOfMeasure
 from src.core.schemas.inventory.uom import UnitOfMeasure
 
-from .exception import UnitOfMeasureIdExists, UnitOfMeasureNotFound
+from .exception import UnitOfMeasureExists, UnitOfMeasureNotFound
 
 
-def check_if_uom_exists(uom_id: str, session: SessionType):
-    db_uom = session.get(DbUnitOfMeasure, uom_id)
+def check_if_uom_exists(uom: UnitOfMeasure, session: SessionType):
+    statement = select(DbUnitOfMeasure).where(
+        or_(
+            DbUnitOfMeasure.name == uom.name,
+            DbUnitOfMeasure.symbol == uom.symbol
+        )
+    )
+    db_uom = session.exec(statement).first()
     if db_uom:
-        raise UnitOfMeasureIdExists()
+        raise UnitOfMeasureExists(uom)
     return
 
 
@@ -27,6 +33,8 @@ def get_uom_by_id(
 
 def validate_uom(uom: UnitOfMeasure, session: SessionType, id: str = None):
     if not id:
+        check_if_uom_exists(uom, session)
+
         db_uom = DbUnitOfMeasure(
             **uom.model_dump(exclude_unset=True, exclude={"id"})
         )

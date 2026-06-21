@@ -10,12 +10,6 @@ from ..warehouse.dependency import get_warehouse_by_id
 from ..unit_of_measure.dependency import get_uom_by_id
 
 
-def check_if_stock_movement_exists(stock_movement_id: str, session: SessionType):
-    db_stock_movement = session.get(DbStockMovement, stock_movement_id)
-    if db_stock_movement:
-        raise StockMovementIdExists()
-    return
-
 
 def validate_stock_movement(stock_movement: StockMovement, session: SessionType):
     get_item_by_id(stock_movement.item_id, session)

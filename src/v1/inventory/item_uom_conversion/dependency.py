@@ -18,13 +18,6 @@ from .exception import (
 )
 
 
-def check_if_uom_exists(conv_id: str, session: SessionType):
-    db_item_uom_conv = session.get(DbItemUOMConversion, conv_id)
-    if db_item_uom_conv:
-        raise ItemUOMConversionIdExists()
-    return
-
-
 def check_if_uom_conv_exists(conv: ItemUOMConversion, session: SessionType):
     stmnt = select(DbItemUOMConversion).where(
         DbItemUOMConversion.item_id == conv.item_id,
@@ -72,6 +65,7 @@ def get_item_uom_conv_by_uom_id(from_uom_id: str, to_uom_id: str, session: Sessi
 def validate_item_uom_conv(
     conv: ItemUOMConversion, session: SessionType, id: str = None
 ):
+    get_item_by_id(conv.item_id, session)
     check_if_uom_conv_exists(conv, session)
 
     from_uom = get_uom_by_id(conv.from_uom_id, session)

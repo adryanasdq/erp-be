@@ -9,7 +9,7 @@ class Warehouse(SQLModel, table=True):
     __table_args__ = {"schema": "main"}
 
     id: str = Field(primary_key=True, index=True, default_factory=generate_cuid)
-    name: str = Field(max_length=50, nullable=False)
+    name: str = Field(max_length=50, nullable=False, unique=True)
     location: str | None = Field(default=None, max_length=255)
     modified_date: datetime = Field(
         default=func.now(), sa_column_kwargs={"onupdate": func.now()}

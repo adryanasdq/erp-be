@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 
 
-class ItemIdExists(HTTPException):
-    def __init__(self):
-        super().__init__(status_code=400, detail="Item ID already exists. Try again.")
+class ItemSKUExists(HTTPException):
+    def __init__(self, sku:str):
+        super().__init__(status_code=400, detail=f"Item with SKU {sku} already exists.")
 
 
 class ItemNotFound(HTTPException):

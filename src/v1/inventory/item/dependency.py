@@ -1,19 +1,20 @@
 from datetime import datetime
 from fastapi import Depends
-from sqlmodel import Session as SessionType
+from sqlmodel import Session as SessionType, select
 
 from src.core.settings.database import get_session
 from src.core.models.inventory.item import Item as DbItem
 from src.core.schemas.inventory.item import Item
 
-from .exception import ItemIdExists, ItemNotFound
+from .exception import ItemNotFound, ItemSKUExists
 from ..unit_of_measure.dependency import get_uom_by_id
 
 
-def check_if_item_exists(item_id: str, session: SessionType):
-    db_item = session.get(DbItem, item_id)
-    if db_item:
-        raise ItemIdExists()
+def check_if_item_exists(item: Item, session: SessionType):    
+    statement = select(DbItem).where(DbItem.sku == item.sku)
+    db_item_sku = session.exec(statement).first()
+    if db_item_sku:
+        raise ItemSKUExists(item.sku)
     return
 
 
@@ -30,6 +31,8 @@ def validate_item(item: Item, session: SessionType, id: str = None):
     get_uom_by_id(item.uom_id, session)
 
     if not id:
+        check_if_item_exists(item, session)
+        
         db_item = DbItem(
             **item.model_dump(exclude_unset=True, exclude={"id"})
         )

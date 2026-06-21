@@ -9,8 +9,8 @@ class UnitOfMeasure(SQLModel, table=True):
     __table_args__ = {"schema": "main"}
 
     id: str = Field(primary_key=True, index=True, default_factory=generate_cuid)
-    name: str = Field(max_length=50, nullable=False)
-    symbol: str | None = Field(default=None, max_length=10)
+    name: str = Field(max_length=50, nullable=False, unique=True)
+    symbol: str | None = Field(default=None, max_length=10, unique=True)
     type: str = Field(default=None)
     modified_date: datetime = Field(
         default=func.now(), sa_column_kwargs={"onupdate": func.now()}

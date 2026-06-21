@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 
 
-class WarehouseIdExists(HTTPException):
+class WarehouseExists(HTTPException):
     def __init__(self):
-        super().__init__(status_code=400, detail="Warehouse ID already exists. Try again.")
+        super().__init__(status_code=400, detail="Warehouse is already exists.")
 
 
 class WarehouseNotFound(HTTPException):
