@@ -28,7 +28,7 @@ def get_stock_movement(id: str, session=Depends(get_session)):
     return stock_movement
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def create_stock_movement(
     data: StockMovement, session: SessionType = Depends(get_session)
 ):
@@ -37,7 +37,7 @@ def create_stock_movement(
     return create(validated_stock_movement, validated_stock_balance, session)
 
 
-@router.post("/transfer")
+@router.post("/transfer", status_code=201)
 def create_stock_transfer(
     data: StockTransfer, session: SessionType = Depends(get_session)
 ):

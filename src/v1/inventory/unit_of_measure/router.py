@@ -23,7 +23,7 @@ def get_uom(id: str, session=Depends(get_session)):
     return uom
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def create_uom(data: UnitOfMeasure, session: SessionType = Depends(get_session)):
     validated_uom = validate_uom(data, session)
     return create(validated_uom, session)

@@ -23,7 +23,7 @@ def get_item(id: str, session=Depends(get_session)):
     return item
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def create_item(data: Item, session: SessionType = Depends(get_session)):
     validated_item = validate_item(data, session)
     return create(validated_item, session)

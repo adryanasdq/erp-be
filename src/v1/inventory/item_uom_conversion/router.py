@@ -23,7 +23,7 @@ def get_conversion_by_id(id: str, session=Depends(get_session)):
     return conversion
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def create_conversion(
     data: ItemUOMConversion, session: SessionType = Depends(get_session)
 ):

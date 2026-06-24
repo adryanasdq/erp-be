@@ -23,7 +23,7 @@ def get_warehouse(id: str, session = Depends(get_session)):
     return warehouse
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def create_warehouse(data: Warehouse, session: SessionType = Depends(get_session)):
     validated_warehouse = validate_warehouse(data, session)
     return create(validated_warehouse, session)
