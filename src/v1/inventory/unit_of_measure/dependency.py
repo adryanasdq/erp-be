@@ -1,6 +1,6 @@
 from datetime import datetime
 from fastapi import Depends
-from sqlmodel import Session as SessionType, select, or_
+from sqlmodel import Session as SessionType, select, and_
 
 from src.core.settings.database import get_session
 from src.core.models.inventory.uom import UnitOfMeasure as DbUnitOfMeasure
@@ -11,7 +11,7 @@ from .exception import UnitOfMeasureExists, UnitOfMeasureNotFound
 
 def check_if_uom_exists(uom: UnitOfMeasure, session: SessionType):
     statement = select(DbUnitOfMeasure).where(
-        or_(
+        and_(
             DbUnitOfMeasure.name == uom.name,
             DbUnitOfMeasure.symbol == uom.symbol
         )
